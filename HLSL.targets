@@ -16,7 +16,7 @@
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
     
-	<!-- Select the FXC compiler in order of precedence -->
+    <!-- Select the FXC compiler in order of precedence -->
     <Choose>
         <When Condition=" '$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots@KitsRoot81)' != '' ">
             <PropertyGroup>
@@ -30,17 +30,17 @@
         </When>
     </Choose>
     
-	<!-- Compile debug shaders -->
+    <!-- Compile debug shaders -->
     <Target Name="ShaderCompile" BeforeTargets="BeforeBuild" Inputs="@(Shader)" Outputs="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )">
         
-		<!-- Debug build for shaders -->
+	<!-- Debug build for shaders -->
         <Exec Command="&quot;$(CompilerPath)&quot; /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; /Zi /Fd &quot;$(OutputPath)%(Filename).pdb&quot; &quot;%(FullPath)&quot;" IgnoreExitCode="true" Condition=" '$(Configuration)' == 'Debug' " />
         
-		<!-- Release build for shaders -->
+	<!-- Release build for shaders -->
         <Exec Command="&quot;$(CompilerPath)&quot; /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; &quot;%(FullPath)&quot;" IgnoreExitCode="true" Condition=" '$(Configuration)' == 'Release' " />
     </Target>
     
-	<!-- Embed resources -->
+    <!-- Embed resources -->
     <Target Name="BeforeBuild" AfterTargets="ShaderCompile" BeforeTargets="Build">
         <ItemGroup>
             <EmbeddedResource Include="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )">
@@ -51,7 +51,7 @@
         <Message Text="Embedded the following files: [@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )]" Importance="high" />
     </Target>
     
-	<Target Name="Clean">
-        <Delete Files="@(Shader -&gt; '$(IntermediateOutputPath)%(Filename).cso' )" />
+    <Target Name="Clean">
+        <Delete Files="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )" />
     </Target>
 </Project>
