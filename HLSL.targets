@@ -1,0 +1,57 @@
+<!--
+	Copyright 2015 Joshua R. Rodgers
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+    
+	<!-- Select the FXC compiler in order of precedence -->
+    <Choose>
+        <When Condition=" '$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots@KitsRoot81)' != '' ">
+            <PropertyGroup>
+                <CompilerPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots@KitsRoot81)bin\x86\fxc.exe</CompilerPath>
+            </PropertyGroup>
+        </When>
+        <When Condition=" '$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots@KitsRoot)' != '' ">
+            <PropertyGroup>
+                <CompilerPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots@KitsRoot)bin\x86\fxc.exe</CompilerPath>
+            </PropertyGroup>
+        </When>
+    </Choose>
+    
+	<!-- Compile debug shaders -->
+    <Target Name="ShaderCompile" BeforeTargets="BeforeBuild" Inputs="@(Shader)" Outputs="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )">
+        
+		<!-- Debug build for shaders -->
+        <Exec Command="&quot;$(CompilerPath)&quot; /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; /Zi /Fd &quot;$(OutputPath)%(Filename).pdb&quot; &quot;%(FullPath)&quot;" IgnoreExitCode="true" Condition=" '$(Configuration)' == 'Debug' " />
+        
+		<!-- Release build for shaders -->
+        <Exec Command="&quot;$(CompilerPath)&quot; /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; &quot;%(FullPath)&quot;" IgnoreExitCode="true" Condition=" '$(Configuration)' == 'Release' " />
+    </Target>
+    
+	<!-- Embed resources -->
+    <Target Name="BeforeBuild" AfterTargets="ShaderCompile" BeforeTargets="Build">
+        <ItemGroup>
+            <EmbeddedResource Include="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )">
+                <LogicalName>$(RootNamespace).Shaders.%(Filename)</LogicalName>
+            </EmbeddedResource>
+        </ItemGroup>
+
+        <Message Text="Embedded the following files: [@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )]" Importance="high" />
+    </Target>
+    
+	<Target Name="Clean">
+        <Delete Files="@(Shader -&gt; '$(IntermediateOutputPath)%(Filename).cso' )" />
+    </Target>
+</Project>
