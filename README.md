@@ -1,5 +1,7 @@
 # AlphaMapper Renderer
 
+[![Build status](https://ci.appveyor.com/api/projects/status/121kia9d2rwoj9uc?svg=true)](https://ci.appveyor.com/project/Mr-Byte/alphamapper-renderer)
+
 The core rendering engine used by AlphaMapper to render map tiles.
 
 ## Copyright and license
