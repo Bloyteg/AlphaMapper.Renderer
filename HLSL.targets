@@ -37,10 +37,10 @@
   <Target Name="ShaderCompile" BeforeTargets="BeforeBuild" Inputs="@(Shader)" Outputs="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )">
 
     <!-- Debug build for shaders -->
-    <Exec Command="&quot;$(CompilerPath)&quot; /nologo /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; /Zi /Fd &quot;$(OutputPath)%(Filename).pdb&quot; &quot;%(FullPath)&quot;" IgnoreExitCode="true" Condition=" '$(Configuration)' == 'Debug' " />
+    <Exec Command="&quot;$(CompilerPath)&quot; /nologo /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; /Zi /Fd &quot;$(OutputPath)%(Filename).pdb&quot; &quot;%(FullPath)&quot;" Condition=" '$(Configuration)' == 'Debug' " />
 
     <!-- Release build for shaders -->
-    <Exec Command="&quot;$(CompilerPath)&quot; /nologo /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; &quot;%(FullPath)&quot;" IgnoreExitCode="true" Condition=" '$(Configuration)' == 'Release' " />
+    <Exec Command="&quot;$(CompilerPath)&quot; /nologo /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; &quot;%(FullPath)&quot;" Condition=" '$(Configuration)' == 'Release' " />
   </Target>
 
   <!-- Embed resources -->
