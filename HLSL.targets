@@ -33,8 +33,12 @@
     </When>
   </Choose>
 
+  <Target Name="BeforeShaderCompile" BeforeTargets="BeforeBuild;ShaderCompile">
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+  </Target>
+
   <!-- Compile debug shaders -->
-  <Target Name="ShaderCompile" BeforeTargets="BeforeBuild" Inputs="@(Shader)" Outputs="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )">
+  <Target Name="ShaderCompile" BeforeTargets="BeforeBuild" AfterTargets="BeforeShaderCompiler" Inputs="@(Shader)" Outputs="@(Shader -> '$(IntermediateOutputPath)%(Filename).cso' )">
 
     <!-- Debug build for shaders -->
     <Exec Command="&quot;$(CompilerPath)&quot; /nologo /T %(Shader.Profile) /Fo &quot;$(IntermediateOutputPath)%(Filename).cso&quot; /Zi /Fd &quot;$(OutputPath)%(Filename).pdb&quot; &quot;%(FullPath)&quot;" Condition=" '$(Configuration)' == 'Debug' " />
